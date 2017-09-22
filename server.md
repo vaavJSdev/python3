@@ -20,8 +20,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 		parsePath = urlparse(path)
 		filePath = parsePath.path
 		fileQuery = parsePath.query
-
-		result = {"parse":parsePath, "path":filePath , "query": fileQuery}
+		fileDecode = urllib.parse.parse_qs(fileQuery)
+		result = {"parse":parsePath, "path":filePath , "query": fileQuery, "decodeQuery": fileDecode}
 		return result
 
 	def doPrintPostAll(self,post_data):
@@ -35,6 +35,17 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 		for data in post_data[key]:
 			self.wfile.write(bytes(data,"UTF-8"))
 
+	def doPrintGetAll(self,get_data):
+		for key, value in get_data.items():
+			self.wfile.write(bytes(key+" = ","UTF-8"))
+
+			for data in value:
+				self.wfile.write(bytes(data,"UTF-8"))
+
+	def doPrintGetSpecified(self,key,get_data):
+		for data in get_data[key]:
+			self.wfile.write(bytes(data,"UTF-8"))
+
 	def do_GET(self):
 		rootdir = "c:/xampp/htdocs/"
 		try:
@@ -43,13 +54,22 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 			pathParse = self.doPathParse(path)
 
 			filePath = pathParse["path"]
+
 			fileQuery = pathParse["query"]
+
+			fileDecode = pathParse["decodeQuery"]
+
 			file = open(rootdir + filePath)
 
 			fileContent = file.read()
+
 			self._set_headers()
 			# WFILE => Contains the output stream for writing a response back to the client.
 			self.wfile.write(bytes(fileContent,"UTF-8"))
+			# --- METER EN UNA CLASE --- #
+			#self.doPrintGetSpecified("getParam",fileDecode)
+
+
 		except IOError:
 			self.send_error(404, 'file not found')
 
@@ -67,7 +87,9 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 		# rfile Contains an input stream, positioned at the start of the optional input data.
 		self._set_headers()
 		self.wfile.write(bytes("<p>Hola</p>","UTF-8"))
-		self.doPrintPostSpecified("nombre",post_data)
+
+		# --- METER EN UNA CLASE --- #
+		#self.doPrintPostSpecified("postParam",post_data)
 		
 
 def run(server_class=HTTPServer, handler_class=HTTPServer_RequestHandler):
