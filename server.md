@@ -1,8 +1,7 @@
 #!C:/Python36/python.exe
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
-import os
-
+from urllib import response
 # BHRH --> handle the HTTP requests that arrive at the server (GET / POST)
 # HTTPServer -->  This class builds on the TCPServer create
 # server address as instance variables named server_name and server_port.
@@ -19,7 +18,8 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 		parsePath = urlparse(path)
 		filePath = parsePath.path
 		fileQuery = parsePath.query
-		result = {"path":filePath , "query": fileQuery}
+
+		result = {"parse":parsePath, "path":filePath , "query": fileQuery}
 		return result
 
 	def do_GET(self):
@@ -28,7 +28,7 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 			path = self.path
 
 			pathParse = self.doPathParse(path)
-			
+
 			filePath = pathParse["path"]
 			fileQuery = pathParse["query"]
 			file = open(rootdir + filePath)
@@ -45,15 +45,13 @@ class HTTPServer_RequestHandler(BaseHTTPRequestHandler):
 
 	def do_POST(self):
 		path = self.path
-
 		# <--- Gets the size of data
 		content_length = int(self.headers['Content-Length'])
 		# <--- Gets the data itself
-		# Contains an input stream, positioned at the start of the optional input data.
 		post_data = self.rfile.read(content_length)
+		# rfile Contains an input stream, positioned at the start of the optional input data.
 		self._set_headers()
 		self.wfile.write(post_data)
-		#print(post_data)
 
 def run(server_class=HTTPServer, handler_class=HTTPServer_RequestHandler):
 	print('starting server...')
