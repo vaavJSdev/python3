@@ -1,5 +1,6 @@
-#!C:/Python36/python.exe
+
 ```
+#!C:/Python36/python.exe
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 from urllib import response
