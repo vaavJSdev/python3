@@ -1,4 +1,5 @@
 #!C:/Python36/python.exe
+```
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse
 from urllib import response
@@ -64,3 +65,4 @@ def run(server_class=HTTPServer, handler_class=HTTPServer_RequestHandler):
 
 if __name__ == '__main__':
 	run()
+```
